@@ -306,8 +306,8 @@ function flattenArray(nestedArray) {
  *   selectMany([[1, 2], [3, 4], [5, 6]], (x) => x) =>   [ 1, 2, 3, 4, 5, 6 ]
  *   selectMany(['one','two','three'], (x) => x.split('')) =>   ['o','n','e','t','w','o','t','h','r','e','e']
  */
-function selectMany(/* arr, childrenSelector */) {
-  throw new Error('Not implemented');
+function selectMany(arr, childrenSelector) {
+  return arr.flatMap(childrenSelector);
 }
 
 /**
@@ -388,8 +388,14 @@ function generateOdds(len) {
  *   getElementByIndices(['one','two','three'], [2]) => 'three'  (arr[2])
  *   getElementByIndices([[[ 1, 2, 3]]], [ 0, 0, 1 ]) => 2        (arr[0][0][1])
  */
-function getElementByIndices(/* arr, indices */) {
-  throw new Error('Not implemented');
+function getElementByIndices(arr, indices) {
+  let res = arr[indices[0]];
+
+  for (let i = 1; i < indices.length; i += 1) {
+    res = res[indices[i]];
+  }
+
+  return res;
 }
 
 /**
@@ -479,8 +485,8 @@ function getHexRGBValues(arr) {
  *   getMaxItems([ 10, 2, 7, 5, 3, -5 ], 3) => [ 10, 7, 5 ]
  *   getMaxItems([ 10, 10, 10, 10 ], 3) => [ 10, 10, 10 ]
  */
-function getMaxItems(/* arr, n */) {
-  throw new Error('Not implemented');
+function getMaxItems(arr, n) {
+  return arr.sort((a, b) => b - a).slice(0, n);
 }
 
 /**
@@ -496,23 +502,7 @@ function getMaxItems(/* arr, n */) {
  *    findCommonElements([1, 2, 3], ['a', 'b', 'c']) => []
  */
 function findCommonElements(arr1, arr2) {
-  const values = {};
-  arr1.forEach((el) => {
-    values[el] = false;
-  });
-  arr2.forEach((el) => {
-    values[el] = true;
-  });
-
-  const res = [];
-
-  Object.keys(values).forEach((el) => {
-    if (values[el]) {
-      res.push(+el);
-    }
-  });
-
-  return res;
+  return arr1.filter((el) => arr2.includes(el));
 }
 
 /**
@@ -544,10 +534,20 @@ function findLongestIncreasingSubsequence(/* nums */) {
  *  propagateItemsByPositionIndex([ 'a', 'b', 'c', null ]) => [ 'a', 'b', 'b', 'c', 'c', 'c',  null, null, null, null ]
  *  propagateItemsByPositionIndex([ 1,2,3,4,5 ]) => [ 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5 ]
  */
-function propagateItemsByPositionIndex(/* arr */) {
-  throw new Error('Not implemented');
-}
+function propagateItemsByPositionIndex(arr) {
+  const result = [];
+  function helper(item, count) {
+    for (let i = 0; i < count; i += 1) {
+      result.push(item);
+    }
+  }
 
+  for (let i = 0; i < arr.length; i += 1) {
+    helper(arr[i], i + 1);
+  }
+
+  return result;
+}
 /**
  * Shifts an array by n positions. If n is negative, the array is shifted to the left;
  * if positive, it is shifted to the right.
@@ -561,8 +561,33 @@ function propagateItemsByPositionIndex(/* arr */) {
  *    shiftArray(['a', 'b', 'c', 'd'], -1) => ['b', 'c', 'd', 'a']
  *    shiftArray([10, 20, 30, 40, 50], -3) => [40, 50, 10, 20, 30]
  */
-function shiftArray(/* arr, n */) {
-  throw new Error('Not implemented');
+function shiftArray(arr, n) {
+  const result = arr;
+  let count = n;
+  let right = true;
+  if (count < 0) right = false;
+
+  function toLeft() {
+    result.push(result[0]);
+    result.shift();
+  }
+
+  function toRight() {
+    result.unshift(result[result.length - 1]);
+    result.pop();
+  }
+
+  while (count !== 0) {
+    if (right) {
+      toRight();
+      count -= 1;
+    } else {
+      toLeft();
+      count += 1;
+    }
+  }
+
+  return result;
 }
 
 /**
