@@ -20,8 +20,8 @@
  *    getIntervalArray(0, 100) => [ 0, 1, 2, ..., 100 ]
  *    getIntervalArray(3, 3) => [ 3 ]
  */
-function getIntervalArray(/* start, end */) {
-  throw new Error('Not implemented');
+function getIntervalArray(start, end) {
+  return Array.from({ length: end - start + 1 }, (n, i) => start + i);
 }
 
 /**
@@ -344,20 +344,21 @@ function calculateBalance(arr) {
  *    createChunks([10, 20, 30, 40, 50], 1) => [[10], [20], [30], [40], [50]]
  */
 function createChunks(arr, chunkSize) {
-  const generalArray = [];
   let secondaryArray = [];
-
-  for (let i = 0; i < arr.length; i += 1) {
-    if (secondaryArray.length === chunkSize) {
-      generalArray.push(secondaryArray);
-      secondaryArray = [];
+  const res = arr.reduce((generalArray, item, index) => {
+    if (index % chunkSize === 0) {
+      if (secondaryArray.length) {
+        generalArray.push(secondaryArray);
+        secondaryArray = [];
+      }
     }
-    secondaryArray.push(arr[i]);
-  }
+    secondaryArray.push(item);
+    return generalArray;
+  }, []);
 
-  if (secondaryArray.length) generalArray.push(secondaryArray);
+  if (secondaryArray.length) res.push(secondaryArray);
 
-  return generalArray;
+  return res;
 }
 
 /**
