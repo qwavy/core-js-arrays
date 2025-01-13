@@ -376,13 +376,17 @@ function createChunks(arr, chunkSize) {
 function generateOdds(len) {
   const arr = [];
   let index = 0;
-  while (arr.length !== len) {
+  function recurse(data) {
+    if (data.length === len) {
+      return data;
+    }
     if (index % 2 !== 0) {
-      arr.push(index);
+      data.push(index);
     }
     index += 1;
+    return recurse(data);
   }
-  return arr;
+  return recurse(arr);
 }
 
 /**
@@ -398,13 +402,13 @@ function generateOdds(len) {
  *   getElementByIndices([[[ 1, 2, 3]]], [ 0, 0, 1 ]) => 2        (arr[0][0][1])
  */
 function getElementByIndices(arr, indices) {
-  let res = arr[indices[0]];
+  // let res = arr[indices[0]];
 
-  for (let i = 1; i < indices.length; i += 1) {
-    res = res[indices[i]];
-  }
-
-  return res;
+  // for (let i = 1; i < indices.length; i += 1) {
+  //   res = res[indices[i]];
+  // }
+  // return res;
+  return indices.reduce((res, index) => res[index], arr);
 }
 
 /**
@@ -457,10 +461,10 @@ function getIdentityMatrix(/* n */) {
  *    getIndicesOfOddNumbers([11, 22, 33, 44, 55]) => [0, 2, 4]
  */
 function getIndicesOfOddNumbers(numbers) {
-  const indexes = {};
-  for (let i = 0; i < numbers.length; i += 1) {
-    indexes[numbers[i]] = i;
-  }
+  const indexes = numbers.reduce((acc, num, i) => {
+    acc[num] = i;
+    return acc;
+  }, {});
 
   return numbers.filter((num) => num % 2 !== 0).map((n) => indexes[n]);
 }
@@ -544,18 +548,10 @@ function findLongestIncreasingSubsequence(/* nums */) {
  *  propagateItemsByPositionIndex([ 1,2,3,4,5 ]) => [ 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5 ]
  */
 function propagateItemsByPositionIndex(arr) {
-  const result = [];
-  function helper(item, count) {
-    for (let i = 0; i < count; i += 1) {
-      result.push(item);
-    }
-  }
-
-  for (let i = 0; i < arr.length; i += 1) {
-    helper(arr[i], i + 1);
-  }
-
-  return result;
+  return arr.reduce((acc, curr, currIndex) => {
+    const modifyArr = Array.from({ length: currIndex + 1 }).fill(curr);
+    return acc.concat(modifyArr);
+  }, []);
 }
 /**
  * Shifts an array by n positions. If n is negative, the array is shifted to the left;
